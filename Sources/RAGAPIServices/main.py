@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from Utils.ConfigParserUtil import ConfigParserUtil
 from Utils.LoggerUtil import LoggerUtil
-from Routers.MovieStatsRouter import MovieStatsRouter
 from Routers.PDRWriterRouter import PDRWriterRouter
 from Routers.PDFQAEngineRouter import PDFQARouter
 from Handlers.Middlewares import TimeTrackerMiddleware

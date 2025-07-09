@@ -1,0 +1,9 @@
+docker run -d   --name ragapi-prod   --network prod_project_fastapi_mongo_net   -v /home/babu/git/mongodb_tls_ready/certs:/certs:ro   -e ENV=prod   -p 8000:8000   fastapi-service
+docker run -d   --name ragapi-dev   --network prod_project_fastapi_mongo_net -e ENV=dev -e MONGO_CERT_PATH=/certs -v /home/babu/git/mongodb_tls_ready/certs:/certs:ro   -p 8000:8000   fastapi-service
+
+later add the fastapi docker to the docker network of mongodb bet it prod or dev
+when executing from docker use the internal 27017 port to connect to db instead of 27018 or 27019
+
+make sure these system env are set.
+export ENV=dev or prod
+export MONGO_CERT_PATH=~/git/mongodb_tls_ready/certs
