@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query
 from pydantic import BaseModel
 from langchain_community.embeddings import OllamaEmbeddings
 import weaviate
-from typing import List, Dict, Any
+from typing import Union, List, Dict, Any
 from Utils.LoggerUtil import LoggerUtil
 
 
@@ -12,25 +12,58 @@ class PDFQAEngine:
         self.client = weaviate.Client(weaviate_url)
         self.logger = LoggerUtil()
 
-    def ask(self, question: str, class_name="PDFPage", top_k=3) -> List[Dict[str, Any]]:
+    # def ask(self, question: str, class_name="PDFPage", top_k=3) -> List[Dict[str, Any]]:
+    #     try:
+    #         vector = self.embedder.embed_query(question)
+    #         result = self.client.query.get(class_name, ["content", "page_number", "filename"]) \
+    #             .with_near_vector({"vector": vector}) \
+    #             .with_limit(top_k) \
+    #             .do()
+
+    #         hits = result["data"]["Get"].get(class_name, [])
+    #         return hits
+    #     except Exception as e:
+    #         self.logger.error(f"❌ PDFQAEngine failed: {e}")
+    #         return []
+
+    def ask(self, question: str, class_name="PDFPage", top_k=3, generate=False) -> Union[List[Dict[str, Any]], str]:
         try:
             vector = self.embedder.embed_query(question)
-            result = self.client.query.get(class_name, ["content", "page_number", "filename"]) \
-                .with_near_vector({"vector": vector}) \
-                .with_limit(top_k) \
-                .do()
 
-            hits = result["data"]["Get"].get(class_name, [])
-            return hits
+            if generate:
+                # 🧠 Use Weaviate's generative-ollama module
+                response = self.client.query \
+                    .get(class_name, ["content", "page_number", "filename"]) \
+                    .with_near_vector({"vector": vector}) \
+                    .with_limit(top_k) \
+                    .with_generate(single_prompt=f"Answer this question using the context: {question}") \
+                    .do()
+
+                generated = response["data"]["Get"][class_name][0]["_additional"]["generate"]["singleResult"]
+                return generated
+
+            else:
+                # 🔍 Default retrieval-only path
+                result = self.client.query.get(class_name, ["content", "page_number", "filename"]) \
+                    .with_near_vector({"vector": vector}) \
+                    .with_limit(top_k) \
+                    .do()
+
+                hits = result["data"]["Get"].get(class_name, [])
+                return hits
+
         except Exception as e:
             self.logger.error(f"❌ PDFQAEngine failed: {e}")
-            return []
+            return [] if not generate else "Generation failed."
+
 
 
 class QueryRequest(BaseModel):
     question: str
     class_name: str = "PDFPage"
     top_k: int = 3
+    generate: bool = False  # <-- Add this line
+
 
 
 class PDFQARouter:
@@ -41,5 +74,11 @@ class PDFQARouter:
         self.router.add_api_route("/query", self.query_pdf, methods=["POST"])
 
     async def query_pdf(self, request: QueryRequest):
-        results = self.qa_engine.ask(request.question, request.class_name, request.top_k)
+        results = self.qa_engine.ask(
+            request.question,
+            request.class_name,
+            request.top_k,
+            generate=request.generate  # <-- Pass the generate flag
+        )
         return {"results": results}
+

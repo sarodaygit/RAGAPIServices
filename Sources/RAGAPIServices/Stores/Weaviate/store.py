@@ -72,24 +72,6 @@ class WeaviateConnect:
             except Exception as e:
                 logging.error(f"❌ Failed to create class {class_name}: {e}")
 
-    # def store_documents(self, class_name, docs, filename):
-    #     """Store a list of document objects into the specified class."""
-    #     for doc in docs:
-    #         try:
-    #             self.client.data_object.create(
-    #                 data_object={
-    #                     "content": doc["text"],
-    #                     "page_number": doc["page"],
-    #                     "filename": filename
-    #                 },
-    #                 class_name=class_name,
-    #                 vector=doc["vector"],
-    #                 uuid=str(uuid.uuid4())
-    #             )
-    #             logging.info(f"📝 Stored page {doc['page']} of {filename} in Weaviate.")
-    #         except Exception as e:
-    #             logging.error(f"❌ Failed to store page {doc['page']} of {filename}: {e}")
-
     def store_documents(self, class_name, docs, filename, batch_size=10):
         """Store documents in batches for better performance."""
         if not docs:

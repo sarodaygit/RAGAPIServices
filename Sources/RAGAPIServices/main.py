@@ -28,7 +28,7 @@ global_prefix = config.getValue("General", "prefix_url")
 
 # Register routers
 
-movie_router = MovieStatsRouter(prefix="/movies").router
+# movie_router = MovieStatsRouter(prefix="/movies").router
 pdf_router = PDRWriterRouter(prefix="/pdrwriter").router
 PDFqa_router = PDFQARouter(prefix="/pdfqa").router
 
@@ -41,7 +41,7 @@ def read_root():
 
 # Include routers in the FastAPI app
 
-app.include_router(movie_router)
+# app.include_router(movie_router)
 app.include_router(pdf_router)
 app.include_router(PDFqa_router)
 
