@@ -6,3 +6,16 @@
 2025-07-07 21:33:12,577 - Utils.LoggerUtil - INFO - 📄 Embedding and storing: tmpe59h9zbi.pdf
 2025-07-07 21:34:44,162 - Utils.LoggerUtil - INFO - 📄 Embedding and storing: tmph6rj7a_v.pdf
 2025-07-08 16:59:27,167 - Utils.LoggerUtil - INFO - Hello Worldxxxxxxxxxxxx
+2025-07-09 19:54:19,005 - Utils.LoggerUtil - INFO - 📄 Embedding and storing: tmpvn4zgc79.pdf
+2025-07-09 20:35:37,785 - Utils.LoggerUtil - ERROR - ❌ PDFQAEngine failed: 'NoneType' object is not subscriptable
+2025-07-09 20:36:50,981 - Utils.LoggerUtil - ERROR - ❌ PDFQAEngine failed: 'NoneType' object is not subscriptable
+2025-07-21 22:46:18,432 - Utils.LoggerUtil - INFO - Hello Worldxxxxxxxxxxxx
+2025-07-21 22:47:00,071 - Utils.LoggerUtil - INFO - 📄 Received ARO RO Contact Details -12-12-2016.pdf, storing to class 'PDFPage' as string
+2025-07-21 22:48:16,719 - Utils.LoggerUtil - INFO - 📄 Received ARO RO Contact Details -12-12-2016.pdf, storing to class 'PDFPage' as string
+2025-07-21 22:48:23,828 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as string
+2025-07-23 13:45:54,438 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as string
+2025-07-23 13:55:36,295 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as pdf
+2025-07-23 17:20:23,131 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as pdf
+2025-07-23 17:22:50,808 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as pdf
+2025-07-23 17:26:49,305 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as pdf
+2025-07-23 17:29:49,642 - Utils.LoggerUtil - INFO - 📄 Received odyssey.pdf, storing to class 'PDFPage' as pdf
