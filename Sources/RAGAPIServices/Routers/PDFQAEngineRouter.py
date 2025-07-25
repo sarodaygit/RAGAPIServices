@@ -26,15 +26,14 @@ class PDFQAEngine:
     #         self.logger.error(f"❌ PDFQAEngine failed: {e}")
     #         return []
 
+   
     def ask(self, question: str, class_name="PDFPage", top_k=3, generate=False) -> Union[List[Dict[str, Any]], str]:
         try:
-            vector = self.embedder.embed_query(question)
-
             if generate:
-                # 🧠 Use Weaviate's generative-ollama module
+                # 🧠 Hybrid + Generative
                 response = self.client.query \
                     .get(class_name, ["content", "page_number", "filename"]) \
-                    .with_near_vector({"vector": vector}) \
+                    .with_hybrid(query=question, alpha=0.5) \
                     .with_limit(top_k) \
                     .with_generate(single_prompt=f"Answer this question using the context: {question}") \
                     .do()
@@ -43,19 +42,32 @@ class PDFQAEngine:
                 return generated
 
             else:
-                # 🔍 Default retrieval-only path
-                result = self.client.query.get(class_name, ["content", "page_number", "filename"]) \
-                    .with_near_vector({"vector": vector}) \
+                # 🔍 Hybrid Search with fallback
+                response = self.client.query \
+                    .get(class_name, ["content", "page_number", "filename"]) \
+                    .with_hybrid(query=question, alpha=0.5) \
                     .with_limit(top_k) \
+                    .with_additional(["score", "certainty"]) \
                     .do()
 
-                hits = result["data"]["Get"].get(class_name, [])
+                hits = response["data"]["Get"].get(class_name, [])
+
+                # Fallback to vector search if hybrid returns nothing
+                if not hits:
+                    vector = self.embedder.embed_query(question)
+                    response = self.client.query \
+                        .get(class_name, ["content", "page_number", "filename"]) \
+                        .with_near_vector({"vector": vector}) \
+                        .with_limit(top_k) \
+                        .with_additional(["score", "certainty"]) \
+                        .do()
+                    hits = response["data"]["Get"].get(class_name, [])
+
                 return hits
 
         except Exception as e:
             self.logger.error(f"❌ PDFQAEngine failed: {e}")
             return [] if not generate else "Generation failed."
-
 
 
 class QueryRequest(BaseModel):
